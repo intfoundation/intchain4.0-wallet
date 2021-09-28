@@ -209,9 +209,9 @@ export default {
         {"name": "ETH", "address": "0xf4a7a68c04c8e94f4d399639966a95323dc32d8b"}
       ],
       ethList:[
-        {"name": "EINT", "address": "0xbe038a2fdfec62cf1bed852f141a43005035edcc"},
-        {"name": "WBTC", "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"},
-        {"name": "WETH", "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"}
+        {"name": "EINT", "address": "0x9779b6f93dcd9ef455bedfd442404f680bd8246e"},
+        {"name": "WBTC", "address": "0x2a223d92494ec26e49e3d2b035f4a3c93097fd2f"},
+        {"name": "WETH", "address": "0x7564b3244270161cce125f44ffa0230aefd4a2d9"}
       ],
       fromCoin: "INT",
       fromContractAddr: "",

@@ -103,7 +103,7 @@ let hexToString = (str) => {
 let sendSignTx = async params => {
     let nonce = await getNonce(params.account.address);
     let tx = {
-        chainId: "0x1",
+        chainId: "0x03",
         nonce: Nat.fromString('' + nonce),
         gasPrice: Nat.fromString('0x' + new BigNumber(params.gasPrice).multipliedBy(Math.pow(10, 18)).toString(16)),
         gas: Nat.fromString(params.gas),
