@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@metamask/onboarding": "^1.0.1",
     "ajv": "^6.7.0",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
@@ -24,7 +25,7 @@
     "elliptic": "^6.5.1",
     "ethjs-account": "^0.1.4",
     "ethjs-signer": "^0.1.1",
-    "int4.js": "^4.0.19",
+    "int4.js": "^4.0.33",
     "lodash": "^4.17.15",
     "moment": "^2.23.0",
     "pbkdf2": "^3.0.17",

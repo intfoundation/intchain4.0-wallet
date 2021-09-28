@@ -24,7 +24,7 @@ locale.use(lang)
 Vue.config.productionTip = false
 
 const i18n = new VueI18n({
-    locale: 'zh', // 语言标识
+    locale: 'en', // 语言标识
     messages: {
         en,
         zh

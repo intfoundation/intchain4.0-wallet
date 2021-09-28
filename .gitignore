@@ -5,6 +5,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 test.js
+yarn.lock
+package.lock.json
 
 # Editor directories and files
 .idea

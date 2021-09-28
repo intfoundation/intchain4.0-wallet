@@ -55,10 +55,10 @@
           <a class="link" >{{$t('detail.Community')}}</a>
         </a>
 
-        <a class="isc" target="_blank" href="http://wallet.intchain.io/index.html">
-          <span class="rmb wallet"></span>
-          <a class="link">{{$t('detail.wallet')}}</a>
-        </a>
+<!--        <a class="isc" target="_blank" href="http://wallet.intchain.io/index.html">-->
+<!--          <span class="rmb wallet"></span>-->
+<!--          <a class="link">{{$t('detail.wallet')}}</a>-->
+<!--        </a>-->
 
       </div>
     </div>

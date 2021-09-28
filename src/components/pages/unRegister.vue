@@ -24,65 +24,16 @@
             <p style="font-size: 14px">{{ $t("yAddr") }}</p>
             <el-input
               style="width: 420px"
-              disabled
+              readonly
               v-model="address"
             ></el-input>
           </div>
           <div class="item">
-            <p style="font-size: 14px">INT {{ $t("balance") }}</p>
+            <p style="font-size: 14px">{{ $t("balance") }}</p>
             <el-input
               style="width: 420px"
-              disabled
+              readonly
               v-model="balance"
-            ></el-input>
-          </div>
-
-          <div class="item">
-            <p style="font-size: 14px">{{ $t("contract") }}</p>
-            <el-select
-              style="width: 420px"
-              v-model="selectContract"
-              :placeholder="$t('pleaseSelectContract')"
-              value-key="contractAddress"
-            >
-              <el-option
-                v-for="item in contracts"
-                :key="item.contract_address"
-                :value="item"
-                :label="item.contract_address"
-              >
-                <span style="float: left">{{ item.contract_address }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.amount
-                }}</span>
-              </el-option>
-            </el-select>
-          </div>
-
-          <div class="item">
-            <p style="font-size: 14px">Token {{ $t("balance") }}</p>
-            <el-input
-              style="width: 420px"
-              :placeholder="$t('pleaseSelectContract')"
-              disabled
-              v-model="selectContract.amount"
-            ></el-input>
-          </div>
-
-          <div class="item">
-            <p style="font-size: 14px">{{ $t("toAddr") }}</p>
-            <el-input
-              style="width: 420px"
-              v-model="toAddress"
-              :placeholder="$t('toAddr')"
-            ></el-input>
-          </div>
-          <div class="item">
-            <p style="font-size: 14px">{{ $t("amount") }}</p>
-            <el-input
-              style="width: 420px"
-              v-model="amount"
-              :placeholder="$t('amount')"
             ></el-input>
           </div>
           <div class="item">
@@ -114,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import Access from "./modules/access";
 import EyeInput from "./modules/eyeInput";
 import BigNumber from "bignumber.js";
@@ -128,11 +78,7 @@ export default {
       balance: 0,
       address: "",
       privateKey: "",
-      contracts: [],
-      selectContract: "",
-      toAddress: "",
-      amount: "",
-      limit: "100000",
+      limit: "21000",
       price: "",
     };
   },
@@ -141,21 +87,21 @@ export default {
     EyeInput,
   },
   created() {
-    this.getGasPrice();
+    // this.getGasPrice();
   },
   mounted() {
-    this.collectAccount();
+    this.connectAccount();
   },
   methods: {
-    async collectAccount () {
+    async connectAccount () {
       try {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
         this.address = accounts[0];
         this.getBalance();
         this.getGasPrice();
       } catch (e) {
         console.log('request accounts error:', e);
-        this.info("error", this.$t("reqeustAccountsError"));
+        // this.info("error", this.$t("reqeustAccountsError"));
       }
     },
 
@@ -166,7 +112,6 @@ export default {
           params: [this.address]
         })
         .then( (result) => {
-            console.log('balance', result);
             // this.balance = new BigNumber(parseInt(result, 16))
             //   .dividedBy(Math.pow(10, 18))
             //   .toString()
@@ -218,32 +163,8 @@ export default {
           .dividedBy(Math.pow(10, 18))
           .toString();
       });
-      axios
-        .get("/api/account/contracts", { params: { address: this.address } })
-        .then((res) => {
-          this.contracts = res.data;
-          if (this.selectContract) {
-            for (let c of this.contracts) {
-              if (c.contract_address == this.selectContract.contract_address) {
-                this.selectContract = c;
-              }
-            }
-          }
-        });
     },
-    sendTx() {
-      if (!this.selectContract || !this.selectContract.contract_address) {
-        this.info("error", this.$t("pleaseSelectContract"));
-        return;
-      }
-      if (!int4.utils.isAddress(this.toAddress)) {
-        this.info("error", this.$t("errAddr"));
-        return;
-      }
-      if (isNaN(this.amount) || this.amount <= 0) {
-        this.info("error", this.$t("errAmount"));
-        return;
-      }
+    async sendTx() {
       if (isNaN(this.limit) || this.limit <= 0) {
         this.info("error", this.$t("errLimit"));
         return;
@@ -253,50 +174,70 @@ export default {
         return;
       }
 
+      if (this.price < 0.000005) {
+        this.price = '0.000005'
+      }
+
       if (this.limit < 21000) {
         this.info("error", this.$t("errLimitLess"));
         return;
       }
 
-      if (this.price > 0.0005) {
+      if (this.price > 0.00005) {
         this.info("error", this.$t("errPriceBig"));
         return;
       }
 
-      if (this.selectContract.amount < this.amount) {
-        this.info("error", this.$t("contractNotEnough"));
-        return;
-      }
-      let data = int4.abi.encodeParams(
-        ["address", "uint256"],
-        [
-          this.toAddress,
-          new BigNumber(
-            Math.round(
-              this.amount * Math.pow(10, this.selectContract.decimals)
-            )
-          ),
-        ]
-      );
-      let functionSig = int4.abi.methodID("transfer", ["address", "uint256"]);
-      rpc
-        .sendSignTx({
-          gasPrice: this.price,
-          gas: this.limit,
-          to: this.selectContract.contract_address,
-          value: 0,
-          account: { address: this.address, privateKey: this.privateKey },
-          data: functionSig + data.substring(2),
+      let functionSig = int4.abi.methodID("UnRegister", []);
+
+      // rpc
+      //   .sendSignTx({
+      //     gasPrice: this.price,
+      //     gas: this.limit,
+      //     to: "0x0000000000000000000000000000000000001001",
+      //     value: "1000000",
+      //     account: { address: this.address, privateKey: this.privateKey },
+      //     data: functionSig + data.substring(2),
+      //   })
+      //   .then((res) => {
+      //     this.$alert("hash:" + res, "success", {
+      //       confirmButtonText: this.$t("confirm"),
+      //       type: "success",
+      //     });
+      //   })
+      //   .catch((err) => {
+      //     this.$message.error("Register failed");
+      //   });
+
+      const params = [
+        {
+          from: this.address,
+          to: "0x0000000000000000000000000000000000001001",
+          gas: Utils.toHex(this.limit),
+          gasPrice: Utils.toHex(Utils.fromINT(this.price)),
+          value: "0x0",
+          data: functionSig
+        },
+      ];
+
+      ethereum
+        .request({
+          method: 'eth_sendTransaction',
+          params,
         })
-        .then((res) => {
-          this.$alert("hash:" + res, "success", {
+        .then((result) => {
+          console.log('hash', result);
+          this.$alert("hash:" + result, "success", {
             confirmButtonText: this.$t("confirm"),
             type: "success",
           });
-          let timer = setTimeout(() => {
-            this.unlock({ address: this.address, privateKey: this.privateKey });
-            clearTimeout(timer);
-          }, 10000);
+
+          setTimeout(() => {
+            this.getBalance();
+          }, 4000)
+        })
+        .catch((error) => {
+          console.log('tx error', error)
         });
     },
   },

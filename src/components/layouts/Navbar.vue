@@ -14,14 +14,14 @@
           id="home"
           :class="{ 'nav-active': $route.path === '/' }"
           class="pgy"
-          >{{ $t("newWallet") }}</router-link
+          >{{ $t("walletInfo") }}</router-link
         >
         <router-link
-          to="/walletInfo"
+          to="/newWallet"
           id="home"
-          :class="{ 'nav-active': $route.path === '/walletInfo' }"
+          :class="{ 'nav-active': $route.path === '/newWallet' }"
           class="pgy"
-          >{{ $t("walletInfo") }}</router-link
+          >{{ $t("newWallet") }}</router-link
         >
 
         <!-- <router-link to="/mapping" id="home" :class="{'nav-active': $route.path === '/mapping'}" class="pgy">{{$t('mapping')}}</router-link> -->
@@ -34,19 +34,33 @@
           >{{ $t("transfer") }}</router-link
         >
 
-        <router-link
-          to="/contract"
-          id="home"
-          :class="{ 'nav-active': $route.path === '/contract' }"
-          class="pgy"
-          >{{ $t("contract") }}</router-link
-        >
+<!--        <router-link-->
+<!--          to="/contract"-->
+<!--          id="home"-->
+<!--          :class="{ 'nav-active': $route.path === '/contract' }"-->
+<!--          class="pgy"-->
+<!--          >{{ $t("contract") }}</router-link-->
+<!--        >-->
         <router-link
           to="/register"
           id="home"
           :class="{ 'nav-active': $route.path === '/register' }"
           class="pgy"
           >{{ $t("register") }}</router-link
+        >
+        <router-link
+          to="/unRegister"
+          id="home"
+          :class="{ 'nav-active': $route.path === '/unRegister' }"
+          class="pgy"
+        >{{ $t("unRegister") }}</router-link
+        >
+        <router-link
+          to="/editValidator"
+          id="home"
+          :class="{ 'nav-active': $route.path === '/editValidator' }"
+          class="pgy"
+        >{{ $t("editValidator") }}</router-link
         >
 <!--        <router-link-->
 <!--          to="/unForbidden"-->
@@ -56,6 +70,7 @@
 <!--          >{{ $t("unForbidden") }}</router-link-->
 <!--        >-->
         <router-link
+          v-if="isTestNetwork"
           to="/faucet"
           id="home"
           :class="{ 'nav-active': $route.path === '/faucet' }"
@@ -72,15 +87,16 @@
         >
 
 <!--        <router-link-->
-<!--          to="/mineReward"-->
+<!--          v-if="!isTestNetwork"-->
+<!--          to="/bridge"-->
 <!--          id="home"-->
-<!--          :class="{ 'nav-active': $route.path === '/mineReward' }"-->
+<!--          :class="{ 'nav-active': $route.path === '/bridge' }"-->
 <!--          class="pgy"-->
-<!--          >{{ $t("mineReward") }}</router-link-->
+<!--          >{{ $t("bridge") }}</router-link-->
 <!--        >-->
         <div
           class="common-inline-block vg"
-          style="float: right; margin-right: -70px"
+          style="margin-left: 30px"
         >
           <a href="javacript:void(0);">
             <span>{{ $t("language") }}</span>
@@ -95,6 +111,9 @@
             </div>
           </div>
         </div>
+        <div class="common-inline-block">
+          <button id="connectButton">Connect Wallet</button>
+        </div>
       </div>
     </div>
   </div>
@@ -102,6 +121,7 @@
 
 <script>
 import axios from "axios";
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 export default {
   name: "NavPanel",
@@ -110,6 +130,8 @@ export default {
       curNav: "Home",
       searchContent: "",
       otherSearch: "",
+      chainId: '0x7ff',
+      testChainId: '0x800',
       blockchainList: [
         {
           name: this.$t("nav.blockchain.block"),
@@ -139,7 +161,14 @@ export default {
           url: "/static/help/cn.pdf",
         },
       ],
+      isTestNetwork: true,
     };
+  },
+  created() {
+    this.getLocaction();
+  },
+  mounted() {
+    this.initialize();
   },
   methods: {
     hh() {
@@ -152,6 +181,126 @@ export default {
     highlight(index) {
       this.curNav = index;
     },
+
+    getLocaction() {
+      this.isTestNetwork = window.location.hostname.substr(0, 4) === "test" || window.location.hostname.substr(0, 4) === "loca";
+    },
+
+    async initialize () {
+      const onboardButton = document.getElementById('connectButton');
+      const onboarding = new MetaMaskOnboarding();
+
+      // 判断是否安装
+      const isMetaMaskInstalled = () => {
+        const { ethereum } = window;
+        return Boolean(ethereum && ethereum.isMetaMask);
+      };
+
+
+      const onClickInstall = () => {
+        onboardButton.innerText = 'Onboarding in progress';
+        onboardButton.disabled = true;
+        onboarding.startOnboarding()
+      }
+
+      const onClickConnect = async () => {
+        await RequestAccount()
+      }
+
+      const onClickSwitchChain = async () => {
+        await switchToEtheruemChain()
+      }
+
+      const MetaMaskClientCheck = () => {
+        if (!isMetaMaskInstalled()) {
+          onboardButton.innerText = 'Click here to install MetaMask!';
+          onboardButton.onclick = onClickInstall;
+          onboardButton.disabled = false
+        } else {
+          onboardButton.innerText = this.$t('connect');
+          onboardButton.onclick = onClickConnect;
+          onboardButton.disabled = false
+        }
+      };
+
+      // TODO: 判断是否为 INT 的链
+      const RequestAccount = async () => {
+        try {
+          const chainId = await ethereum.request({ method: 'eth_chainId' });
+          if (chainId !== this.chainId && chainId !== this.testChainId) {
+            window.location.reload();
+          } else {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            onboardButton.innerText = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`
+            window.location.reload()
+          }
+
+        } catch (e) {
+          console.log('request accounts error:', e);
+          // this.info("error", this.$t("reqeustAccountsError"));
+        }
+      };
+
+      const ConnectAccount = async () => {
+        try {
+          const chainId = await ethereum.request({ method: 'eth_chainId' });
+          if (chainId !== this.chainId  && chainId !== this.testChainId) {
+            onboardButton.innerText = this.$t('wrongNetwork');
+            onboardButton.onclick = onClickSwitchChain;
+          }else {
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+            onboardButton.innerText = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`;
+          }
+        } catch (e) {
+          console.log('request accounts error:', e);
+          // this.info("error", this.$t("reqeustAccountsError"));
+        }
+      };
+
+      const switchToEtheruemChain = async () => {
+        try {
+          await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x7ff'}]
+          })
+          window.location.reload();
+        } catch (e) {
+          if (e.code === 4902) {
+            try {
+              await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x7ff',
+                  chainName: 'INT Chain',
+                  nativeCurrency: {
+                    name: "INT",
+                    symbol: "INT",
+                    decimals: 18
+                  },
+                  rpcUrls: ["https://titansrpc.intchain.io"],
+                  blockExplorerUrls: ['https://titansexplorer.intchain.io']
+                }]
+              })
+
+              window.location.reload();
+            } catch (e) {
+              console.log('add network error', e)
+            }
+          }
+        }
+      };
+
+      ethereum.on('chainChanged', (_chainId) => {
+        window.location.reload();
+      });
+
+      ethereum.on('accountsChanged', (_accounts) => {
+        window.location.reload();
+      });
+
+      MetaMaskClientCheck();
+      ConnectAccount();
+    }
   },
 };
 </script>
@@ -178,7 +327,7 @@ export default {
       margin-left: 10px;
       width: 1100px;
       & a {
-        margin-right: 30px;
+        margin-right: 15px;
         color: #666666;
         text-decoration: none;
         font-weight: 500;
@@ -272,6 +421,21 @@ export default {
         width: 24px;
         height: 22px;
       }
+    }
+
+    #connectButton {
+      width: 150px;
+      height: 30px;
+      color: #ffffff;
+      border: 1px solid #e73737;
+      border-radius: 20px;
+      background-color: #f56c6c;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #connectButton:hover {
+      opacity: 0.75;
     }
   }
 }

@@ -7,7 +7,7 @@
         alt=""
       />
     </div>
-    <div class="box">
+    <div class="box" style="height: 527px;">
       <div style="margin: 48px 0 0 108px">
         <div class="item">
           <p style="font-size: 14px">{{ $t("yAddr") }}</p>

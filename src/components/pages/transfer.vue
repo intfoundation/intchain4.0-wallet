@@ -6,7 +6,7 @@
       </div>
       <Access @unlock="unlock"></Access>
     </div>
-    <div v-if="step==2" style="padding-bottom:90px">
+    <div v-if="step==2" style="padding-bottom:149px">
       <div class="bg-box">
         <img style="margin-top:-80px;width:100%;" src="../../assets/backgroud.jpg" alt />
       </div>
@@ -55,13 +55,13 @@ let rpc = require("../../../int/rpc");
 export default {
   data() {
     return {
-      step: 1,
+      step: 2,
       balance: 0,
       address: "",
       privateKey: "",
       toAddress: "",
       amount: "",
-      limit: "30000",
+      limit: "21000",
       price: "",
     };
   },
@@ -70,19 +70,70 @@ export default {
     EyeInput,
   },
   created() {
-    this.getGasPrice();
+    // this.getGasPrice();
   },
-  mounted() {},
+  mounted() {
+    this.connectAccount();
+  },
   methods: {
+    async connectAccount () {
+      try {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        this.address = accounts[0];
+        this.getBalance();
+        this.getGasPrice();
+      } catch (e) {
+        console.log('request accounts error:', e);
+        // this.info("error", this.$t("reqeustAccountsError"));
+      }
+    },
+
+    getBalance () {
+      ethereum
+        .request({
+        method: 'eth_getBalance',
+        params: [this.address]
+      })
+        .then( (result) => {
+          console.log('balance', result);
+          // this.balance = new BigNumber(parseInt(result, 16))
+          //   .dividedBy(Math.pow(10, 18))
+          //   .toString()
+          this.balance = Utils.toINT(result)
+        }
+      )
+        .catch( (error) => {
+          console.log('error', error)
+        }
+
+      )
+
+    },
+
     getGasPrice() {
-      rpc.getGasPrice().then((res) => {
-        //this.price = res;
-        this.price = new BigNumber(res)
-          .dividedBy(Math.pow(10, 18))
-          .toFixed(18)
-          .replace(/\.0+$/, "")
-          .replace(/(\.\d+[1-9])0+$/, "$1");
-      });
+      // rpc.getGasPrice().then((res) => {
+      //   //this.price = res;
+      //   this.price = new BigNumber(res)
+      //     .dividedBy(Math.pow(10, 18))
+      //     .toFixed(18)
+      //     .replace(/\.0+$/, "")
+      //     .replace(/(\.\d+[1-9])0+$/, "$1");
+      // });
+      ethereum
+        .request({
+        method: 'eth_gasPrice',
+        params: []
+      })
+        .then((result) => {
+          console.log('gasprice', result);
+          this.price = Utils.toINT(result);
+        }
+      )
+        .catch((error) => {
+          console.log('error', error)
+        }
+
+      )
     },
     unlock(account) {
       this.step = 2;
@@ -108,24 +159,69 @@ export default {
         this.info("error", this.$t("errLimit"));
         return;
       }
+
+      if (this.price < 0.000005) {
+        this.price = '0.000005'
+      }
+
+      if (this.limit < 21000) {
+        this.info("error", this.$t("errLimitLess"));
+        return;
+      }
+
       if (isNaN(this.price) || this.price < 0) {
         this.info("error", this.$t("errPrice"));
         return;
       }
-      rpc
-        .sendSignTx({
-          gasPrice: this.price,
-          gas: this.limit,
+
+      if (this.price > 0.00005) {
+        this.info("error", this.$t("errPriceBig"));
+        return;
+      }
+
+      // rpc
+      //   .sendSignTx({
+      //     gasPrice: this.price,
+      //     gas: this.limit,
+      //     to: this.toAddress,
+      //     value: this.amount,
+      //     account: { address: this.address, privateKey: this.privateKey },
+      //     data: "",
+      //   })
+      //   .then((res) => {
+      //     this.$alert("hash:" + res, "success", {
+      //       confirmButtonText: this.$t("confirm"),
+      //       type: "success",
+      //     });
+      //   });
+      const params = [
+        {
+          from: this.address,
           to: this.toAddress,
-          value: this.amount,
-          account: { address: this.address, privateKey: this.privateKey },
-          data: "",
+          gas: Utils.toHex(this.limit),
+          gasPrice: Utils.toHex(Utils.fromINT(this.price)),
+          value: Utils.toHex(Utils.fromINT(this.amount)),
+        },
+      ];
+
+      ethereum
+        .request({
+          method: 'eth_sendTransaction',
+          params,
         })
-        .then((res) => {
-          this.$alert("hash:" + res, "success", {
+        .then((result) => {
+          console.log('hash', result);
+          this.$alert("hash:" + result, "success", {
             confirmButtonText: this.$t("confirm"),
             type: "success",
           });
+
+          setTimeout(() => {
+            this.getBalance();
+          }, 3000)
+        })
+        .catch((error) => {
+          console.log('tx error', error)
         });
     },
   },

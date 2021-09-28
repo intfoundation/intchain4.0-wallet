@@ -45,25 +45,25 @@
           </div>
         </div>
       </div>
-      <div style="padding-bottom:90px">
+      <div style="padding-bottom:35px">
         <div class="box" style="height:360px;margin-top:-70px">
           <div style="margin:48px 0 0 108px">
             <div class="item">
               <p style="font-size:14px">{{$t('walletAddress')}}</p>
               <el-input style="width:420px" readonly v-model="address"></el-input>
             </div>
-            <div class="item">
-              <p style="font-size:14px">{{$t('privatekey')}}</p>
-              <eye-input style="width:420px" readonly v-model="privateKey"></eye-input>
-            </div>
+<!--            <div class="item">-->
+<!--              <p style="font-size:14px">{{$t('privatekey')}}</p>-->
+<!--              <eye-input style="width:420px" readonly v-model="privateKey"></eye-input>-->
+<!--            </div>-->
             <div class="item">
               <canvas style="width:156px;height:156px" id="canvas"></canvas>
               <br />
               <p class="scp">{{$t('scp')}}</p>
             </div>
-            <div class="item">
-              <el-button @click="dialogVisible=true" class="dnk" type="danger">{{$t('dnk')}}</el-button>
-            </div>
+<!--            <div class="item">-->
+<!--              <el-button @click="dialogVisible=true" class="dnk" type="danger">{{$t('dnk')}}</el-button>-->
+<!--            </div>-->
           </div>
         </div>
       </div>
@@ -134,6 +134,7 @@ import EyeInput from "./modules/eyeInput";
 import axios from "axios";
 let rpc = require("../../../int/rpc");
 let Keystore = require("int4.js").keystore;
+let QRCode = require("qrcode");
 export default {
   data() {
     var validatePass = (rule, value, callback) => {
@@ -151,7 +152,7 @@ export default {
       }
     };
     return {
-      step: 1,
+      step: 2,
       intPrice: 0,
       balance: 0,
       stake: 0,
@@ -186,30 +187,58 @@ export default {
   created() {
     this.getIntPrice();
   },
-  mounted() {},
+  mounted() {
+    this.connectAccount();
+  },
   methods: {
     getIntPrice() {
       axios
-        .get("https://api.coinmarketcap.com/v2/ticker/2399/")
-        .then((res) => (this.intPrice = res.data.data.quotes.USD.price));
+        .get("https://titansexplorer.intchain.io/api/wallet/getIntPtice")
+        .then((res) => (this.intPrice = res.data));
     },
-    unlock(account) {
-      this.step = 2;
-      this.address = account.address;
-      this.privateKey = account.privateKey;
-      var QRCode = require("qrcode");
-      this.$nextTick(() => {
-        var canvas = document.getElementById("canvas");
-        QRCode.toCanvas(canvas, this.address);
-        canvas.style.height = "170px";
-        canvas.style.width = "170px";
-      });
 
-      rpc.getFullBalance(this.address).then((res) => {
-        this.balance = parseInt(res.balance, 16);
-        this.stake = parseInt(res.delegateBalance, 16);
-      });
+    async connectAccount () {
+      console.log("vue data address", this.$root.$data.address);
+      try {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        this.address = accounts[0];
+        this.getBalance();
+      } catch (e) {
+        console.log('request accounts error:', e);
+        // this.info("error", this.$t("reqeustAccountsError"));
+      }
     },
+
+    getBalance () {
+        rpc.getFullBalance(this.address).then((res) => {
+          this.balance = parseInt(res.balance, 16);
+          this.stake = parseInt(res.delegateBalance, 16);
+        });
+
+        this.$nextTick(() => {
+          var canvas = document.getElementById("canvas");
+          QRCode.toCanvas(canvas, this.address);
+          canvas.style.height = "170px";
+          canvas.style.width = "170px";
+        });
+    },
+    // unlock(account) {
+    //   this.step = 2;
+    //   this.address = account.address;
+    //   this.privateKey = account.privateKey;
+    //   var QRCode = require("qrcode");
+    //   this.$nextTick(() => {
+    //     var canvas = document.getElementById("canvas");
+    //     QRCode.toCanvas(canvas, this.address);
+    //     canvas.style.height = "170px";
+    //     canvas.style.width = "170px";
+    //   });
+    //
+    //   rpc.getFullBalance(this.address).then((res) => {
+    //     this.balance = parseInt(res.balance, 16);
+    //     this.stake = parseInt(res.delegateBalance, 16);
+    //   });
+    // },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {

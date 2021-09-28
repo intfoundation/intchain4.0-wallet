@@ -15,6 +15,12 @@ const contract = resolve => require(['@/components/pages/contract'], resolve)
 //注册
 const register = resolve => require(['@/components/pages/register'], resolve)
 
+//注销
+const unRegister = resolve => require(['@/components/pages/unRegister'], resolve)
+
+//编辑节点信息
+const editValidator = resolve => require(['@/components/pages/editValidator'], resolve)
+
 //解禁
 // const unForbidden = resolve => require(['@/components/pages/unForbidden'], resolve)
 
@@ -27,6 +33,9 @@ const stake = resolve => require(['@/components/pages/stake'], resolve)
 // 领取奖励
 const mineReward = resolve => require(['@/components/pages/mineReward'], resolve)
 
+// 跨链资产兑换
+const bridge = resolve => require(['@/components/pages/bridge'], resolve)
+
 Vue.use(Router)
 const router = new Router({
     routes: [{
@@ -35,30 +44,41 @@ const router = new Router({
         component: Layout,
         children: [{
             path: '',
-            name: 'newWallet',
-            component: newWallet,
+            name: 'walletInfo',
+            component: walletInfo,
             meta: []
         },
         {
-            path: '/walletInfo',
-            name: 'walletInfo',
-            component: walletInfo,
+            path: '/newWallet',
+            name: 'newWallet',
+            component: newWallet,
         },
         {
             path: '/transfer',
             name: 'transfer',
             component: transfer
         },
-        {
-            path: '/contract',
-            name: 'contract',
-            component: contract
-        },
+        // {
+        //     path: '/contract',
+        //     name: 'contract',
+        //     component: contract
+        // },
         {
             path: '/register',
             name: 'register',
             component: register
         },
+        {
+            path: '/unRegister',
+            name: 'unRegister',
+            component: unRegister
+        },
+        {
+            path: '/editValidator',
+            name: 'editValidator',
+            component: editValidator
+        },
+
         {
             path: '/faucet',
             name: 'faucet',
@@ -73,6 +93,11 @@ const router = new Router({
             path: '/mineReward',
             name: 'mineReward',
             component: mineReward
+        },
+        {
+            path: '/bridge',
+            name: 'bridge',
+            component: bridge
         }
         ]
     }]

@@ -54,6 +54,14 @@
               :label="$t('totalVotes')"
               sortable
             ></el-table-column>
+            <el-table-column
+              :label="$t('commission')"
+              sortable
+            >
+              <template slot-scope="scope">
+                <span>{{scope.row.commission}}%</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="voted" :label="$t('myVotes')">
               <template slot-scope="scope">
                 <p v-if="scope.row.proxiedBalance != '0'">
@@ -75,7 +83,7 @@
             <el-table-column fixed="right" :label="$t('operation')" width="170">
               <template slot-scope="scope">
                 <el-button @click="voted(scope.row)" type="text" size="small">{{
-                  $t("vote")
+                  $t("stake")
                 }}</el-button>
                 <el-button
                   :disabled="
@@ -84,14 +92,14 @@
                   @click="unstake(scope.row)"
                   type="text"
                   size="small"
-                  >{{ $t("withdrawnVote") }}</el-button
+                  >{{ $t("unstake") }}</el-button
                 >
                 <el-button
                   :disabled="scope.row.reward <= 0"
                   @click="getReward(scope.row)"
                   type="text"
                   size="small"
-                  >{{ $t("receiveRewards") }}</el-button
+                  >{{ $t("withdrawRewards") }}</el-button
                 >
               </template>
             </el-table-column>
@@ -125,17 +133,18 @@ import BigNumber from "bignumber.js";
 import axios from "axios";
 let rpc = require("../../../int/rpc");
 let Abi = require("int4.js").abi;
+let Utils = require("int4.js").utils;
 let Web3 = require("web3");
 export default {
   data() {
     return {
-      step: 1,
+      step: 2,
       balance: 0,
       address: "",
       privateKey: "",
       toAddress: "",
       amount: "",
-      limit: "30000",
+      limit: "21000",
       price: "",
       nodes: [],
     };
@@ -145,11 +154,78 @@ export default {
     EyeInput,
   },
   created() {
-    this.getGasPrice();
     this.getNodes();
   },
-  mounted() {},
+  mounted() {
+    this.connectAccount();
+  },
   methods: {
+    async connectAccount () {
+      try {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        this.address = accounts[0];
+        this.getBalance();
+        this.getGasPrice();
+        // this.refresh();
+        // this.$nextTick(() => {
+        //   this.refresh();
+        // });
+        setTimeout(() => {
+          this.refresh();
+        }, 100)
+      } catch (e) {
+        console.log('request accounts error:', e);
+        // this.info("error", this.$t("reqeustAccountsError"));
+      }
+    },
+
+    getBalance () {
+      ethereum
+        .request({
+          method: 'eth_getBalance',
+          params: [this.address]
+        })
+        .then( (result) => {
+            console.log('balance', result);
+            // this.balance = new BigNumber(parseInt(result, 16))
+            //   .dividedBy(Math.pow(10, 18))
+            //   .toString()
+            this.balance = Utils.toINT(result)
+          }
+        )
+        .catch( (error) => {
+            console.log('error', error)
+          }
+
+        )
+
+    },
+
+    getGasPrice() {
+      // rpc.getGasPrice().then((res) => {
+      //   //this.price = res;
+      //   this.price = new BigNumber(res)
+      //     .dividedBy(Math.pow(10, 18))
+      //     .toFixed(18)
+      //     .replace(/\.0+$/, "")
+      //     .replace(/(\.\d+[1-9])0+$/, "$1");
+      // });
+      ethereum
+        .request({
+          method: 'eth_gasPrice',
+          params: []
+        })
+        .then((result) => {
+            console.log('gasprice', result);
+            this.price = Utils.toINT(result);
+          }
+        )
+        .catch((error) => {
+            console.log('error', error)
+          }
+
+        )
+    },
     stringToHex(str) {
       var val = "0x";
       for (var i = 0; i < str.length; i++) {
@@ -179,20 +255,56 @@ export default {
       }).then(({ value }) => {
         let data = Abi.encodeParams(["address"], [row.address]).substring(2);
         let functionSig = Web3.utils.sha3("Delegate(address)").substr(2, 8);
-        rpc
-          .sendSignTx({
-            gasPrice: this.price,
-            gas: this.limit,
+        // rpc
+        //   .sendSignTx({
+        //     gasPrice: this.price,
+        //     gas: this.limit,
+        //     to: "0x0000000000000000000000000000000000001001",
+        //     value: value,
+        //     account: { address: this.address, privateKey: this.privateKey },
+        //     data: "0x" + functionSig + data,
+        //   })
+        //   .then((res) => {
+        //     this.$alert("hash:" + res, "success", {
+        //       confirmButtonText: this.$t("confirm"),
+        //       type: "success",
+        //     });
+        //   });
+
+        if(!this.checkTx()) {
+          return;
+        }
+        const params = [
+          {
+            from: this.address,
             to: "0x0000000000000000000000000000000000001001",
-            value: value,
-            account: { address: this.address, privateKey: this.privateKey },
+            gas: Utils.toHex(this.limit),
+            gasPrice: Utils.toHex(Utils.fromINT(this.price)),
+            value: Utils.toHex(Utils.fromINT(value)),
             data: "0x" + functionSig + data,
+          }
+        ];
+        console.log("tx params", params);
+
+        ethereum
+          .request({
+            method: 'eth_sendTransaction',
+            params,
           })
-          .then((res) => {
-            this.$alert("hash:" + res, "success", {
+          .then((result) => {
+            console.log('hash', result);
+            this.$alert("hash:" + result, "success", {
               confirmButtonText: this.$t("confirm"),
               type: "success",
             });
+
+            setTimeout(() => {
+              this.refresh();
+              this.getBalance();
+            }, 4000)
+          })
+          .catch((error) => {
+            console.log('tx error', error)
           });
       });
     },
@@ -224,21 +336,56 @@ export default {
         let functionSig = Web3.utils
           .sha3("UnDelegate(address,uint256)")
           .substr(2, 8);
-        rpc
-          .sendSignTx({
-            gasPrice: this.price,
-            gas: this.limit,
+        // rpc
+        //   .sendSignTx({
+        //     gasPrice: this.price,
+        //     gas: this.limit,
+        //     to: "0x0000000000000000000000000000000000001001",
+        //     value: "0",
+        //     account: { address: this.address, privateKey: this.privateKey },
+        //     data: "0x" + functionSig + data,
+        //   })
+        //   .then((res) => {
+        //     this.$alert("hash:" + res, "success", {
+        //       confirmButtonText: this.$t("confirm"),
+        //       type: "success",
+        //     });
+        //   });
+        if(!this.checkTx()) {
+          return;
+        }
+        const params = [
+          {
+            from: this.address,
             to: "0x0000000000000000000000000000000000001001",
-            value: "0",
-            account: { address: this.address, privateKey: this.privateKey },
+            gas: Utils.toHex(this.limit),
+            gasPrice: Utils.toHex(Utils.fromINT(this.price)),
+            value: "0x0",
             data: "0x" + functionSig + data,
+          }
+        ];
+
+        ethereum
+          .request({
+            method: 'eth_sendTransaction',
+            params,
           })
-          .then((res) => {
-            this.$alert("hash:" + res, "success", {
+          .then((result) => {
+            console.log('hash', result);
+            this.$alert("hash:" + result, "success", {
               confirmButtonText: this.$t("confirm"),
               type: "success",
             });
+
+            setTimeout(() => {
+              this.refresh();
+              this.getBalance();
+            }, 4000)
+          })
+          .catch((error) => {
+            console.log('tx error', error)
           });
+
       });
     },
     getReward(row) {
@@ -264,22 +411,84 @@ export default {
         let functionSig = Web3.utils
           .sha3("WithdrawReward(address,uint256)")
           .substr(2, 8);
-        rpc
-          .sendSignTx({
-            gasPrice: this.price,
-            gas: this.limit,
+        // rpc
+        //   .sendSignTx({
+        //     gasPrice: this.price,
+        //     gas: this.limit,
+        //     to: "0x0000000000000000000000000000000000001001",
+        //     value: "0",
+        //     account: { address: this.address, privateKey: this.privateKey },
+        //     data: "0x" + functionSig + data,
+        //   })
+        //   .then((res) => {
+        //     this.$alert("hash:" + res, "success", {
+        //       confirmButtonText: this.$t("confirm"),
+        //       type: "success",
+        //     });
+        //   });
+        if(!this.checkTx()) {
+          return;
+        }
+        const params = [
+          {
+            from: this.address,
             to: "0x0000000000000000000000000000000000001001",
-            value: "0",
-            account: { address: this.address, privateKey: this.privateKey },
+            gas: Utils.toHex(this.limit),
+            gasPrice: Utils.toHex(Utils.fromINT(this.price)),
+            value: "0x0",
             data: "0x" + functionSig + data,
+          }
+        ];
+
+        ethereum
+          .request({
+            method: 'eth_sendTransaction',
+            params,
           })
-          .then((res) => {
-            this.$alert("hash:" + res, "success", {
+          .then((result) => {
+            console.log('hash', result);
+            this.$alert("hash:" + result, "success", {
               confirmButtonText: this.$t("confirm"),
               type: "success",
             });
+
+            setTimeout(() => {
+              this.refresh();
+              this.getBalance();
+            }, 4000)
+          })
+          .catch((error) => {
+            console.log('tx error', error)
           });
       });
+    },
+
+    checkTx () {
+      if (isNaN(this.limit) || this.limit <= 0) {
+        this.info("error", this.$t("errLimit"));
+        return false;
+      }
+
+      if (this.limit < 21000) {
+        this.info("error", this.$t("errLimitLess"));
+        return false;
+      }
+
+      if (isNaN(this.price) || this.price < 0) {
+        this.info("error", this.$t("errPrice"));
+        return false;
+      }
+
+      if (this.price < 0.000005) {
+        this.price = '0.000005'
+      }
+
+      if (this.price > 0.00005) {
+        this.info("error", this.$t("errPriceBig"));
+        return false;
+      }
+
+      return true;
     },
     getNodes() {
       axios
@@ -303,22 +512,22 @@ export default {
           }
         });
     },
-    getGasPrice() {
-      rpc.getGasPrice().then((res) => {
-        //this.price = res;
-        this.price = new BigNumber(res)
-          .dividedBy(Math.pow(10, 18))
-          .toFixed(18)
-          .replace(/\.0+$/, "")
-          .replace(/(\.\d+[1-9])0+$/, "$1");
-      });
-    },
+    // getGasPrice() {
+    //   rpc.getGasPrice().then((res) => {
+    //     //this.price = res;
+    //     this.price = new BigNumber(res)
+    //       .dividedBy(Math.pow(10, 18))
+    //       .toFixed(18)
+    //       .replace(/\.0+$/, "")
+    //       .replace(/(\.\d+[1-9])0+$/, "$1");
+    //   });
+    // },
     unlock(account) {
       this.step = 2;
       this.address = account.address;
       this.privateKey = account.privateKey;
-      this.addrVoteRecord();
-      this.getFullBalance();
+      // this.addrVoteRecord();
+      // this.getFullBalance();
       this.refresh();
     },
     addrVoteRecord() {

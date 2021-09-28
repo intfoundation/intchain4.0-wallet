@@ -116,8 +116,19 @@ export default {
         this.info("error", this.$t("errLimit"));
         return;
       }
+
+      if (this.limit < 21000) {
+        this.info("error", this.$t("errLimitLess"));
+        return;
+      }
+
       if (isNaN(this.price) || this.price < 0) {
         this.info("error", this.$t("errPrice"));
+        return;
+      }
+
+      if (this.price > 0.0005) {
+        this.info("error", this.$t("errPriceBig"));
         return;
       }
 
