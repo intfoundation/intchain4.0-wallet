@@ -33,7 +33,43 @@
           class="pgy"
           >{{ $t("transfer") }}</router-link
         >
-
+        <div class="d-meun common-inline-block">
+          <div class="m-title common-inline-block"><span :class="{ 'nav-active': $route.path === '/register' || $route.path === '/unRegister' || $route.path === '/editValidator' || $route.path === '/stake' }">{{ $t("staking") }}</span><i class="nav-icon el-icon-arrow-down"></i></div>
+          <ul class="menu-box common-inline-block">
+            <li class="menu-item">
+              <router-link
+                to="/register"
+                id="home"
+                class="pgy"
+              >{{ $t("register") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                to="/unRegister"
+                id="home"
+                class="pgy"
+              >{{ $t("unRegister") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                to="/editValidator"
+                id="home"
+                class="pgy"
+              >{{ $t("editValidator") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                to="/stake"
+                id="home"
+                class="pgy"
+              >{{ $t("vote") }}</router-link
+              >
+            </li>
+          </ul>
+        </div>
 <!--        <router-link-->
 <!--          to="/contract"-->
 <!--          id="home"-->
@@ -41,27 +77,7 @@
 <!--          class="pgy"-->
 <!--          >{{ $t("contract") }}</router-link-->
 <!--        >-->
-        <router-link
-          to="/register"
-          id="home"
-          :class="{ 'nav-active': $route.path === '/register' }"
-          class="pgy"
-          >{{ $t("register") }}</router-link
-        >
-        <router-link
-          to="/unRegister"
-          id="home"
-          :class="{ 'nav-active': $route.path === '/unRegister' }"
-          class="pgy"
-        >{{ $t("unRegister") }}</router-link
-        >
-        <router-link
-          to="/editValidator"
-          id="home"
-          :class="{ 'nav-active': $route.path === '/editValidator' }"
-          class="pgy"
-        >{{ $t("editValidator") }}</router-link
-        >
+
 <!--        <router-link-->
 <!--          to="/unForbidden"-->
 <!--          id="home"-->
@@ -77,17 +93,42 @@
           class="pgy"
           >{{ $t("faucet") }}</router-link
         >
+        <div class="d-meun common-inline-block">
+          <div class="m-title common-inline-block"><span :class="{ 'nav-active': $route.path === '/bridge1' || $route.path === '/bridge2' || $route.path === '/bridge3' }">{{ $t("bridge") }}</span><i class="nav-icon el-icon-arrow-down"></i></div>
+          <ul class="menu-box common-inline-block">
+            <li class="menu-item">
+              <router-link
+                v-if="isTestNetwork"
+                to="/bridge1"
+                id="home"
+                class="pgy"
+              >{{ $t("intandethBridge") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                v-if="isTestNetwork"
+                to="/bridge2"
+                id="home"
+                class="pgy"
+              >{{ $t("intandbscBridge") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                v-if="isTestNetwork"
+                to="/bridge3"
+                id="home"
+                class="pgy"
+              >{{ $t("ethandbscBridge") }}</router-link
+              >
+            </li>
+          </ul>
+        </div>
 
-        <router-link
-          to="/stake"
-          id="home"
-          :class="{ 'nav-active': $route.path === '/stake' }"
-          class="pgy"
-          >{{ $t("vote") }}</router-link
-        >
 
 <!--        <router-link-->
-<!--          v-if="!isTestNetwork"-->
+<!--          v-if="isTestNetwork"-->
 <!--          to="/bridge"-->
 <!--          id="home"-->
 <!--          :class="{ 'nav-active': $route.path === '/bridge' }"-->
@@ -331,8 +372,73 @@ export default {
         color: #666666;
         text-decoration: none;
         font-weight: 500;
+
+        &:hover {
+          color: #e73737;
+          transition: all .3s ease-in-out;
+        }
         span {
           vertical-align: middle;
+        }
+      }
+      .d-meun {
+        margin-right: 15px;
+        color: #666666;
+        font-weight: 500;
+        position: relative;
+        line-height: 22px;
+
+        .nav-icon {
+          display: inline-block;
+          font-weight: bold;
+          margin-left: 5px;
+          vertical-align: middle;
+          transition: all .3s;
+        }
+
+        &:hover{
+          .m-title {
+            color: #e73737;
+          }
+          .nav-icon {
+            transform: rotate(180deg);
+          }
+          .menu-box {
+            height: auto;
+            padding: 10px 0;
+          }
+        }
+        .menu-box {
+          position: absolute;
+          top: 22px;
+          left: -20px;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          height: 0;
+          overflow: hidden;
+          /*width: 150px;*/
+          background: #ffffff;
+          box-shadow:0 0 8px 0 rgb(230,230,230);
+          z-index: 100;
+          transition: all .5s;
+          .menu-item {
+            height: 25px;
+            line-height: 25px;
+            padding: 5px 10px;
+            font-size: 16px;
+            & > a {
+              display: inline-block;
+              width: 100%;
+              min-width: 80px;
+            }
+            &:hover {
+              background-color: #f3f3f3;
+              & > a {
+                color: #e73737;
+              }
+            }
+          }
         }
       }
       .vg {

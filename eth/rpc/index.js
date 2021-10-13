@@ -4,10 +4,12 @@ let Abi = require("int4.js").abi
 let Transaction = require("int4.js").transaction
 let axios = require("axios")
 
-let run = (body, exchange = false)=> {
+const CHAINID = '3';
+
+let run = (body, exchange = false, direction)=> {
     return new Promise((resolve, reject) => {
         axios
-            .post("/api/wallet/transfer", { body, url: "", isEth: true, exchange: exchange }).then(res => {
+            .post("/api/wallet/transfer", { body, url: "", isEth: true, isBsc: false, exchange: exchange, direction }).then(res => {
                 resolve(res.data)
             }).catch(err => reject(err))
     })
@@ -103,7 +105,7 @@ let hexToString = (str) => {
 let sendSignTx = async params => {
     let nonce = await getNonce(params.account.address);
     let tx = {
-        chainId: "0x03",
+        chainId: Nat.fromString(CHAINID),
         nonce: Nat.fromString('' + nonce),
         gasPrice: Nat.fromString('0x' + new BigNumber(params.gasPrice).multipliedBy(Math.pow(10, 18)).toString(16)),
         gas: Nat.fromString(params.gas),
@@ -113,7 +115,7 @@ let sendSignTx = async params => {
     }
     let signTx = await Transaction.sign(tx, params.account)
     let body = `{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":["${signTx}"],"id":1}`
-    return await run(body, params.exchange)
+    return await run(body, params.exchange, params.direction)
 }
 
 

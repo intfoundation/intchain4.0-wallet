@@ -36,6 +36,15 @@ const mineReward = resolve => require(['@/components/pages/mineReward'], resolve
 // 跨链资产兑换
 const bridge = resolve => require(['@/components/pages/bridge'], resolve)
 
+// 跨链资产兑换
+const bridge1 = resolve => require(['@/components/pages/intAndEthBridge'], resolve)
+
+// 跨链资产兑换
+const bridge2 = resolve => require(['@/components/pages/intAndBscBridge'], resolve)
+
+// 跨链资产兑换
+const bridge3 = resolve => require(['@/components/pages/ethAndBscBridge'], resolve)
+
 Vue.use(Router)
 const router = new Router({
     routes: [{
@@ -95,10 +104,20 @@ const router = new Router({
             component: mineReward
         },
         {
-            path: '/bridge',
-            name: 'bridge',
-            component: bridge
-        }
+            path: '/bridge1',
+            name: 'bridge1',
+            component: bridge1
+        },
+        {
+            path: '/bridge2',
+            name: 'bridge2',
+            component: bridge2
+        },
+        {
+            path: '/bridge3',
+            name: 'bridge3',
+            component: bridge3
+        },
         ]
     }]
 })
