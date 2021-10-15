@@ -210,18 +210,18 @@ export default {
         {"name": "ETH", "address": "0xf4a7a68c04c8e94f4d399639966a95323dc32d8b"}
       ],
       ethList:[
-        {"name": "EINT", "address": "0x9779b6f93dcd9ef455bedfd442404f680bd8246e"},
+        {"name": "INT", "address": "0x9779b6f93dcd9ef455bedfd442404f680bd8246e"},
         {"name": "WBTC", "address": "0x2a223d92494ec26e49e3d2b035f4a3c93097fd2f"},
         {"name": "WETH", "address": "0x7564b3244270161cce125f44ffa0230aefd4a2d9"}
       ],
       bscList:[
-        {"name": "BINT", "address": "0xcf555062c986305bb9f5887f565a5d71bebc4c42"},
-        {"name": "WBTC", "address": "0x462b8aa34a02367d3558a985e80ab7eaf24b5f1d"},
-        {"name": "WETH", "address": "0x8e4de294b2020b4c82aabff6e702d7dd57a21a0e"}
+        {"name": "INT", "address": "0xcf555062c986305bb9f5887f565a5d71bebc4c42"},
+        {"name": "BTC", "address": "0x462b8aa34a02367d3558a985e80ab7eaf24b5f1d"},
+        {"name": "ETH", "address": "0x8e4de294b2020b4c82aabff6e702d7dd57a21a0e"}
       ],
       fromCoin: "INT",
       fromContractAddr: "",
-      toCoin: "BINT",
+      toCoin: "INT",
       isINTToETH: true,
       isINTToBSC: true,
       tokenBalance: 0,
@@ -439,7 +439,7 @@ export default {
           });
           let timer = setTimeout(() => {
             this.amount = 0;
-            this.unlock({ address: this.address, privateKey: this.privateKey });
+            // this.unlock({ address: this.address, privateKey: this.privateKey });
             this.getBalance(this.address);
             this.getTokenBalance(this.address, this.fromContractAddr)
             clearTimeout(timer);
@@ -479,7 +479,7 @@ export default {
               });
               let timer = setTimeout(() => {
                 this.amount = 0;
-                this.unlock({ address: this.address, privateKey: this.privateKey });
+                // this.unlock({ address: this.address, privateKey: this.privateKey });
                 this.getBalance(this.address);
                 this.getTokenBalance(this.address, this.fromContractAddr)
                 clearTimeout(timer);
@@ -505,7 +505,7 @@ export default {
 
               let timer = setTimeout(() => {
                 this.amount = 0;
-                this.unlock({ address: this.address, privateKey: this.privateKey });
+                // this.unlock({ address: this.address, privateKey: this.privateKey });
                 this.getBalance(this.address);
                 this.getTokenBalance(this.address, this.fromContractAddr)
                 clearTimeout(timer);
