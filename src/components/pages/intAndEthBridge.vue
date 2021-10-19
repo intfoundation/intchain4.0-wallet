@@ -209,7 +209,7 @@ export default {
         {"name": "ETH", "address": "0xf4a7a68c04c8e94f4d399639966a95323dc32d8b"}
       ],
       ethList:[
-        {"name": "INT", "address": "0x9779b6f93dcd9ef455bedfd442404f680bd8246e"},
+        {"name": "INT", "address": "0x7408af64BC449029BaDCf763C8Dedfd85AF8ae73"},
         {"name": "WBTC", "address": "0x2a223d92494ec26e49e3d2b035f4a3c93097fd2f"},
         {"name": "WETH", "address": "0x7564b3244270161cce125f44ffa0230aefd4a2d9"}
       ],
