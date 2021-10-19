@@ -93,7 +93,7 @@
           class="pgy"
           >{{ $t("faucet") }}</router-link
         >
-        <div class="d-meun common-inline-block">
+        <div v-if="isTestNetwork" class="d-meun common-inline-block">
           <div class="m-title common-inline-block"><span :class="{ 'nav-active': $route.path === '/bridge1' || $route.path === '/bridge2' || $route.path === '/bridge3' }">{{ $t("bridge") }}</span><i class="nav-icon el-icon-arrow-down"></i></div>
           <ul class="menu-box common-inline-block">
             <li class="menu-item">
