@@ -153,7 +153,7 @@
           </div>
         </div>
         <div class="common-inline-block">
-          <button id="connectButton">Connect Wallet</button>
+          <button id="connectButton" @click=switchToEtheruemChain>{{address}}</button>
         </div>
       </div>
     </div>
@@ -174,6 +174,7 @@ export default {
       currentChainId: '',
       chainId: '0x7ff',
       testChainId: '0x800',
+      address: '',
       blockchainList: [
         {
           name: this.$t("nav.blockchain.block"),
@@ -229,122 +230,79 @@ export default {
     },
 
     async initialize () {
-      const onboardButton = document.getElementById('connectButton');
-      const onboarding = new MetaMaskOnboarding();
-
-      // 判断是否安装
-      const isMetaMaskInstalled = () => {
-        const { ethereum } = window;
-        return Boolean(ethereum && ethereum.isMetaMask);
-      };
-
-
-      const onClickInstall = () => {
-        onboardButton.innerText = 'Onboarding in progress';
-        onboardButton.disabled = true;
-        onboarding.startOnboarding()
-      }
-
-      const onClickConnect = async () => {
-        await RequestAccount()
-      }
-
-      const onClickSwitchChain = async () => {
-        await switchToEtheruemChain()
-      }
-
-      const MetaMaskClientCheck = () => {
-        if (!isMetaMaskInstalled()) {
-          onboardButton.innerText = 'Click here to install MetaMask!';
-          onboardButton.onclick = onClickInstall;
-          onboardButton.disabled = false
-        } else {
-          onboardButton.innerText = this.$t('connect');
-          onboardButton.onclick = onClickConnect;
-          onboardButton.disabled = false
-        }
-      };
-
       this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
-      console.log('navbar current chainid', this.currentChainId);
-      // TODO: 判断是否为 INT 的链
-      const RequestAccount = async (_chainId) => {
-        try {
-          if (_chainId !== this.chainId && _chainId !== this.testChainId && _chainId !== '0x3' && _chainId !== '0x61') {
-            // window.location.reload();
-            console.log('request account', _chainId)
-            ConnectAccount(_chainId);
-          } else {
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-            onboardButton.innerText = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`
-            // window.location.reload()
-          }
 
-        } catch (e) {
-          console.log('request accounts error:', e);
-          // this.info("error", this.$t("reqeustAccountsError"));
+      ethereum.on('chainChanged', (_chainId) => {
+        this.connectAccount(_chainId)
+      });
+
+      ethereum.on('accountsChanged', (_accounts) => {
+        this.requestAccount()
+      });
+
+      this.requestAccount();
+    },
+    async requestAccount () {
+      try {
+        if (this.currentChainId !== this.chainId && this.currentChainId !== this.testChainId && this.currentChainId !== '0x3' && this.currentChainId !== '0x61') {
+          console.log('navbar request account', this.currentChainId)
+          this.connectAccount();
+        } else {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          this.address = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`
         }
-      };
 
-      const ConnectAccount = async (_chainId) => {
-        console.log("navbar connect account", _chainId)
-        try {
-          if (_chainId !== this.chainId  && _chainId !== this.testChainId && _chainId !== "0x3" && _chainId !== "0x61") {
-            onboardButton.innerText = this.$t('wrongNetwork');
-            onboardButton.onclick = onClickSwitchChain;
-          }else {
-            const accounts = await ethereum.request({ method: 'eth_accounts' });
-            onboardButton.innerText = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`;
-          }
-        } catch (e) {
-          console.log('request accounts error:', e);
-          // this.info("error", this.$t("reqeustAccountsError"));
+      } catch (e) {
+        console.log('request accounts error:', e);
+      }
+    },
+    async connectAccount () {
+      console.log("navbar connect account", this.currentChainId)
+      try {
+        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x3" && this.currentChainId !== "0x61") {
+          this.address = this.$t('wrongNetwork');
+        }else {
+          const accounts = await ethereum.request({ method: 'eth_accounts' });
+          this.address = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`;
         }
-      };
-
-      const switchToEtheruemChain = async () => {
-        try {
+      } catch (e) {
+        console.log('request accounts error:', e);
+      }
+    },
+    async switchToEtheruemChain () {
+      try {
+        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x3" && this.currentChainId !== "0x61") {
           await ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: '0x7ff'}]
           })
-          // window.location.reload();
-        } catch (e) {
-          if (e.code === 4902) {
-            try {
-              await ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                  chainId: '0x7ff',
-                  chainName: 'INT Chain',
-                  nativeCurrency: {
-                    name: "INT",
-                    symbol: "INT",
-                    decimals: 18
-                  },
-                  rpcUrls: ["https://titansrpc.intchain.io"],
-                  blockExplorerUrls: ['https://titansexplorer.intchain.io']
-                }]
-              })
 
-              // window.location.reload();
-            } catch (e) {
-              console.log('add network error', e)
-            }
+          this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
+        }
+      } catch (e) {
+        if (e.code === 4902) {
+          try {
+            await ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x7ff',
+                chainName: 'INT Chain',
+                nativeCurrency: {
+                  name: "INT",
+                  symbol: "INT",
+                  decimals: 18
+                },
+                rpcUrls: ["https://titansrpc.intchain.io"],
+                blockExplorerUrls: ['https://titansexplorer.intchain.io']
+              }]
+            })
+
+            this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
+          } catch (e) {
+            console.log('add network error', e)
           }
         }
-      };
-
-      ethereum.on('chainChanged', (_chainId) => {
-        ConnectAccount(_chainId)
-      });
-
-      ethereum.on('accountsChanged', (_accounts) => {
-        RequestAccount()
-      });
-
-      MetaMaskClientCheck();
-      ConnectAccount(this.currentChainId);
+      }
     }
   },
 };

@@ -228,6 +228,7 @@ export default {
   },
   created() {
     this.tokenList = this.intList;
+    this.initialize();
     this.$nextTick(async () => {
       await this.connectAccount();
       await this.switchToEtheruemChain(this.fromChainId);
@@ -239,15 +240,13 @@ export default {
       ethereum.on('chainChanged', (_chainId) => {
         // console.log('chain changed', _chainId);
         this.switchToEtheruemChain(_chainId);
-        // this.getBalance();
-        // this.getGasPrice();
-      })
+      });
 
-      ethereum.on('accountsChanged', (_accounts) => {
+      ethereum.on('accountsChanged', async (_accounts) => {
         // console.log('account changed', _accounts);
         this.address = _accounts[0];
-        this.getBalance();
-        this.getTokenBalance();
+        await this.getBalance();
+        await this.getTokenBalance();
       })
     },
 
@@ -258,7 +257,7 @@ export default {
     },
 
     changeFromOptions(param) {
-      console.log("param", param);
+      // console.log("param", param);
       // console.log("change from options", this.isINT, this.isETH, this.isBSC, this.fromChainId, this.toChainId);
       // this.changeTokenList();
     },
@@ -290,7 +289,7 @@ export default {
       this.changeToken(this.fromCoin)
     },
     changeToOptions(param) {
-      console.log("param", param);
+      // console.log("param", param);
       // console.log("change to options", this.isINT, this.isETH, this.isBSC, this.fromChainId, this.toChainId);
       // this.changeTokenList();
     },
@@ -312,7 +311,7 @@ export default {
           params: []
         })
         .then((result) => {
-            console.log('gasprice', result);
+            // console.log('gasprice', result);
             this.price = Utils.toINT(result);
           }
         )
@@ -395,6 +394,7 @@ export default {
           })
 
           token.amount = new BigNumber(parseInt(b, 16)).dividedBy(Math.pow(10, d));
+          // console.log('token amount', token.amount)
         }
       }
     },
