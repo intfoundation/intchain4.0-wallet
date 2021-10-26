@@ -48,6 +48,7 @@ export default {
     toAddr: 'Collection Address',
     receiveAddress: 'Receive Address',
     amount: 'Amount',
+    chooseToken: 'Choose Token',
     gt: 'Generate Transaction',
     wr: 'Withdraw Reward',
     errPrivatekey: 'The private key is incorrect',

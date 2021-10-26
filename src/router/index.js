@@ -34,7 +34,7 @@ const stake = resolve => require(['@/components/pages/stake'], resolve)
 const mineReward = resolve => require(['@/components/pages/mineReward'], resolve)
 
 // 跨链资产兑换
-const bridge = resolve => require(['@/components/pages/bridge'], resolve)
+const bridge = resolve => require(['@/components/pages/smartBridge'], resolve)
 
 // 跨链资产兑换
 const bridge1 = resolve => require(['@/components/pages/intAndEthBridge'], resolve)
@@ -102,6 +102,11 @@ const router = new Router({
             path: '/mineReward',
             name: 'mineReward',
             component: mineReward
+        },
+        {
+            path: '/bridge',
+            name: 'bridge',
+            component: bridge
         },
         {
             path: '/bridge1',

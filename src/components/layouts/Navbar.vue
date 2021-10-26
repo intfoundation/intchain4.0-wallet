@@ -93,48 +93,48 @@
           class="pgy"
           >{{ $t("faucet") }}</router-link
         >
-        <div v-if="isTestNetwork" class="d-meun common-inline-block">
-          <div class="m-title common-inline-block"><span :class="{ 'nav-active': $route.path === '/bridge1' || $route.path === '/bridge2' || $route.path === '/bridge3' }">{{ $t("bridge") }}</span><i class="nav-icon el-icon-arrow-down"></i></div>
-          <ul class="menu-box common-inline-block">
-            <li class="menu-item">
-              <router-link
-                v-if="isTestNetwork"
-                to="/bridge1"
-                id="home"
-                class="pgy"
-              >{{ $t("intandethBridge") }}</router-link
-              >
-            </li>
-            <li class="menu-item">
-              <router-link
-                v-if="isTestNetwork"
-                to="/bridge2"
-                id="home"
-                class="pgy"
-              >{{ $t("intandbscBridge") }}</router-link
-              >
-            </li>
-            <li class="menu-item">
-              <router-link
-                v-if="isTestNetwork"
-                to="/bridge3"
-                id="home"
-                class="pgy"
-              >{{ $t("ethandbscBridge") }}</router-link
-              >
-            </li>
-          </ul>
-        </div>
+<!--        <div v-if="isTestNetwork" class="d-meun common-inline-block">-->
+<!--          <div class="m-title common-inline-block"><span :class="{ 'nav-active': $route.path === '/bridge1' || $route.path === '/bridge2' || $route.path === '/bridge3' }">{{ $t("bridge") }}</span><i class="nav-icon el-icon-arrow-down"></i></div>-->
+<!--          <ul class="menu-box common-inline-block">-->
+<!--            <li class="menu-item">-->
+<!--              <router-link-->
+<!--                v-if="isTestNetwork"-->
+<!--                to="/bridge1"-->
+<!--                id="home"-->
+<!--                class="pgy"-->
+<!--              >{{ $t("intandethBridge") }}</router-link-->
+<!--              >-->
+<!--            </li>-->
+<!--            <li class="menu-item">-->
+<!--              <router-link-->
+<!--                v-if="isTestNetwork"-->
+<!--                to="/bridge2"-->
+<!--                id="home"-->
+<!--                class="pgy"-->
+<!--              >{{ $t("intandbscBridge") }}</router-link-->
+<!--              >-->
+<!--            </li>-->
+<!--            <li class="menu-item">-->
+<!--              <router-link-->
+<!--                v-if="isTestNetwork"-->
+<!--                to="/bridge3"-->
+<!--                id="home"-->
+<!--                class="pgy"-->
+<!--              >{{ $t("ethandbscBridge") }}</router-link-->
+<!--              >-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </div>-->
 
 
-<!--        <router-link-->
-<!--          v-if="isTestNetwork"-->
-<!--          to="/bridge"-->
-<!--          id="home"-->
-<!--          :class="{ 'nav-active': $route.path === '/bridge' }"-->
-<!--          class="pgy"-->
-<!--          >{{ $t("bridge") }}</router-link-->
-<!--        >-->
+        <router-link
+          v-if="isTestNetwork"
+          to="/bridge"
+          id="home"
+          :class="{ 'nav-active': $route.path === '/bridge' }"
+          class="pgy"
+          >{{ $t("bridge") }}</router-link
+        >
         <div
           class="common-inline-block vg"
           style="margin-left: 30px"
@@ -171,6 +171,7 @@ export default {
       curNav: "Home",
       searchContent: "",
       otherSearch: "",
+      currentChainId: '',
       chainId: '0x7ff',
       testChainId: '0x800',
       blockchainList: [
@@ -264,16 +265,19 @@ export default {
         }
       };
 
+      this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
+      console.log('navbar current chainid', this.currentChainId);
       // TODO: 判断是否为 INT 的链
-      const RequestAccount = async () => {
+      const RequestAccount = async (_chainId) => {
         try {
-          const chainId = await ethereum.request({ method: 'eth_chainId' });
-          if (chainId !== this.chainId && chainId !== this.testChainId) {
-            window.location.reload();
+          if (_chainId !== this.chainId && _chainId !== this.testChainId && _chainId !== '0x3' && _chainId !== '0x61') {
+            // window.location.reload();
+            console.log('request account', _chainId)
+            ConnectAccount(_chainId);
           } else {
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
             onboardButton.innerText = `${accounts[0].substr(0, 6)}...${accounts[0].slice(-4)}`
-            window.location.reload()
+            // window.location.reload()
           }
 
         } catch (e) {
@@ -282,10 +286,10 @@ export default {
         }
       };
 
-      const ConnectAccount = async () => {
+      const ConnectAccount = async (_chainId) => {
+        console.log("navbar connect account", _chainId)
         try {
-          const chainId = await ethereum.request({ method: 'eth_chainId' });
-          if (chainId !== this.chainId  && chainId !== this.testChainId) {
+          if (_chainId !== this.chainId  && _chainId !== this.testChainId && _chainId !== "0x3" && _chainId !== "0x61") {
             onboardButton.innerText = this.$t('wrongNetwork');
             onboardButton.onclick = onClickSwitchChain;
           }else {
@@ -304,7 +308,7 @@ export default {
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: '0x7ff'}]
           })
-          window.location.reload();
+          // window.location.reload();
         } catch (e) {
           if (e.code === 4902) {
             try {
@@ -323,7 +327,7 @@ export default {
                 }]
               })
 
-              window.location.reload();
+              // window.location.reload();
             } catch (e) {
               console.log('add network error', e)
             }
@@ -332,15 +336,15 @@ export default {
       };
 
       ethereum.on('chainChanged', (_chainId) => {
-        window.location.reload();
+        ConnectAccount(_chainId)
       });
 
       ethereum.on('accountsChanged', (_accounts) => {
-        window.location.reload();
+        RequestAccount()
       });
 
       MetaMaskClientCheck();
-      ConnectAccount();
+      ConnectAccount(this.currentChainId);
     }
   },
 };

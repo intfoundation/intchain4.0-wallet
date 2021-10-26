@@ -45,6 +45,7 @@ export default {
     toAddr: '转账地址',
     receiveAddress: '收币地址',
     amount: '数量',
+    chooseToken: '选择币种',
     gt: "生成交易",
     wr: '领取奖励',
     errPrivatekey: '私钥输入不正确',

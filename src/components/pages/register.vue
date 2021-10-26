@@ -118,8 +118,20 @@ export default {
   },
   mounted() {
     this.connectAccount();
+    this.initialize();
   },
   methods: {
+    initialize () {
+      ethereum.on('chainChanged', (_chainId) => {
+        this.getBalance();
+        this.getGasPrice();
+      });
+
+      ethereum.on('accountsChanged', (_accounts) => {
+        this.address = _accounts[0];
+        this.getBalance();
+      })
+    },
     async connectAccount () {
       try {
         const accounts = await ethereum.request({ method: 'eth_accounts' });

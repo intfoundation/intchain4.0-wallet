@@ -189,8 +189,19 @@ export default {
   },
   mounted() {
     this.connectAccount();
+    this.initialize();
   },
   methods: {
+    initialize () {
+      ethereum.on('chainChanged', (_chainId) => {
+        this.getBalance();
+      });
+
+      ethereum.on('accountsChanged', (_accounts) => {
+        this.address = _accounts[0];
+        this.getBalance();
+      })
+    },
     getIntPrice() {
       axios
         .get("https://titansexplorer.intchain.io/api/wallet/getIntPtice")
