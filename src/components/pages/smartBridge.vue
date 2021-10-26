@@ -393,7 +393,7 @@ export default {
             params: params2
           })
 
-          token.amount = new BigNumber(parseInt(b, 16)).dividedBy(Math.pow(10, d));
+          token.amount = new BigNumber(parseInt(b, 16)).dividedBy(Math.pow(10, d)).toString(10);
           // console.log('token amount', token.amount)
         }
       }
@@ -495,7 +495,7 @@ export default {
 
       let transferAmount = this.fromContractAddr === "" ? this.balance : this.tokenBalance;
 
-      if (new BigNumber(this.amount).gt(transferAmount)) {
+      if (new BigNumber(this.amount).gt(new BigNumber(transferAmount))) {
         this.info("error", this.$t("notEnough"));
         return;
       }
