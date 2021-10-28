@@ -113,6 +113,14 @@ export default {
     receiveAddr: '收奖励地址(INT Chain 3.0 地址)',
     totalReward: '总奖励',
 
+    tips: '提醒！',
+    tips1: '跨链手续费 0.00 %',
+    tips2: '最小跨链金额',
+    tips3: 'UTC+8（10:00—18:00）到账时间: 10~30 min',
+    tips4: 'UTC+8（剩余时间）到账时间: 16 h',
+    tips5: '以上大额跨链到账时间: 16 h',
+    tips6: '跨链交易查询页面',
+
 
     blocksList: {
         blocksListTitle: 'Blocks',

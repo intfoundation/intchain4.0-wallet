@@ -113,6 +113,17 @@
                         <el-button @click="dialogVisible=true" class="dnk" type="danger">{{$t('walletInfo.dnk')}}</el-button>
           </div>-->
         </div>
+        <div class="tips">
+          <p>{{$t('tips')}}</p>
+          <ul>
+            <li>{{$t('tips1')}}</li>
+            <li><span>{{$t('tips2')}}</span><span>{{minAmount}}</span>&nbsp<span>{{fromCoin}}</span></li>
+            <li>{{$t('tips3')}}</li>
+            <li>{{$t('tips4')}}</li>
+            <li><span>{{largeAmount}}</span>&nbsp<span>{{fromCoin}}</span><span>{{$t('tips5')}}</span></li>
+            <li><a href="https://test.titansexplorer.intchain.io/stats/bridgelist/1" target="_blank">{{$t('tips6')}}</a></li>
+          </ul>
+        </div>
         <el-button @click="sendTx" class="gt" type="danger">
           {{ $t("gt") }}</el-button>
       </div>
@@ -169,7 +180,7 @@ export default {
       tokenList: [],
       fromChainId: "0x800",
       // fromChain: "INT Chain",
-      fromCoin: "",
+      fromCoin: "INT",
       fromContractAddr: "",
       toChainId: "0x3",
       // toChain: "Ethereum",
@@ -180,6 +191,16 @@ export default {
       isBSC: false,
       tokenBalance: 0,
       tokenDecimals: 0,
+      minAmount: 10000,
+      minAmountINT: 10000,
+      minAmountBTC: 0.01,
+      minAmountETH: 0.1,
+      minAmountUSDT: 200,
+      largeAmount: 10000000,
+      largeAmountINT: 10000000,
+      largeAmountBTC: 100,
+      largeAmountETH: 500,
+      largeAmountUSDT: 1000000,
       chainParams: {
         "0x800": [{
           chainId: '0x800',
@@ -300,6 +321,29 @@ export default {
           this.tokenBalance = l.amount;
           this.tokenDecimals = l.decimals;
           this.fromContractAddr = l.address;
+          switch (token) {
+            case "INT":
+              this.minAmount = this.minAmountINT;
+              this.largeAmount = this.largeAmountINT;
+              break;
+            case "BTC":
+            case "WBTC":
+              this.minAmount = this.minAmountBTC;
+              this.largeAmount = this.largeAmountBTC;
+              break;
+            case "ETH":
+            case "WETH":
+              this.minAmount = this.minAmountETH;
+              this.largeAmount = this.largeAmountETH;
+              break;
+            case "USDT":
+              this.minAmount = this.minAmountUSDT;
+              this.largeAmount = this.largeAmountUSDT;
+              break;
+            default:
+              this.minAmount = this.minAmountINT;
+              this.largeAmount = this.largeAmountINT;
+          }
         }
       }
     },
@@ -651,7 +695,29 @@ export default {
   width: 280px;
   height: 44px;
   margin-left: 450px;
-  margin-top: 50px;
+  margin-top: 20px;
+}
+
+.tips {
+  width: 600px;
+  margin-left: 108px;
+}
+
+.tips > p {
+  margin-bottom: 0;
+}
+
+.tips ul {
+  margin: 5px 0;
+}
+
+.tips li {
+  font-size: 14px;
+}
+
+.tips li a {
+  color: #e73737;
+  text-decoration: none;
 }
 
 .exchange {

@@ -243,6 +243,7 @@ export default {
       this.requestAccount();
     },
     async requestAccount () {
+      this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
       try {
         if (this.currentChainId !== this.chainId && this.currentChainId !== this.testChainId && this.currentChainId !== '0x3' && this.currentChainId !== '0x61') {
           console.log('navbar request account', this.currentChainId)
