@@ -699,7 +699,7 @@ export default {
 }
 
 .tips {
-  width: 600px;
+  width: 750px;
   margin-left: 108px;
 }
 

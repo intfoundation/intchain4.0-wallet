@@ -108,7 +108,7 @@ export default {
     rewardNumber: 'The reward amount must be number',
     rewardGt: 'The reward amount must be greater than 0',
     rewardNotEnough: 'The reward amount is not enough',
-    tips: 'Tips!',
+    tips: 'Reminder!',
     tips1: 'Cross-chain fee is 0.00 %',
     tips2: 'The Minimum cross-chain amount is ',
     tips3: 'The estimated time for users who cross-chain between 2:00 am and 10:00 am (UTC) is 10-30 min',
