@@ -112,7 +112,7 @@ export default {
     tips1: 'Cross-chain fee is 0.00 %',
     tips2: 'The Minimum cross-chain amount is ',
     tips3: 'The estimated time for users who cross-chain between 2:00 am and 10:00 am (UTC) is 10-30 min',
-    tips4: 'The estimated time for users who cross-chain between 10:00 am  - 2:00 am the next day（UTC） is 16 hours',
+    tips4: 'The estimated time for users who cross-chain between 10:00 am  - 2:00 am the next day（UTC）is 16 hours',
     tips5: ' or more, the estimated time is 16 hours',
     tips6: 'Cross-chain transaction search page',
 
