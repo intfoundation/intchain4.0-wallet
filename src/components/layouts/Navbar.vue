@@ -246,7 +246,7 @@ export default {
       this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
       try {
         if (this.currentChainId !== this.chainId && this.currentChainId !== this.testChainId && this.currentChainId !== '0x3' && this.currentChainId !== '0x61') {
-          console.log('navbar request account', this.currentChainId)
+          // console.log('navbar request account', this.currentChainId)
           this.connectAccount();
         } else {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -258,7 +258,7 @@ export default {
       }
     },
     async connectAccount () {
-      console.log("navbar connect account", this.currentChainId)
+      // console.log("navbar connect account", this.currentChainId)
       try {
         if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x3" && this.currentChainId !== "0x61") {
           this.address = this.$t('wrongNetwork');
