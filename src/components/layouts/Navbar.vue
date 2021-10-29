@@ -128,7 +128,7 @@
 
 
         <router-link
-          v-if="isTestNetwork"
+          v-if="!isTestNetwork"
           to="/bridge"
           id="home"
           :class="{ 'nav-active': $route.path === '/bridge' }"
@@ -245,7 +245,7 @@ export default {
     async requestAccount () {
       this.currentChainId = await ethereum.request({ method: 'eth_chainId' });
       try {
-        if (this.currentChainId !== this.chainId && this.currentChainId !== this.testChainId && this.currentChainId !== '0x3' && this.currentChainId !== '0x61') {
+        if (this.currentChainId !== this.chainId && this.currentChainId !== this.testChainId && this.currentChainId !== '0x1' && this.currentChainId !== '0x38') {
           // console.log('navbar request account', this.currentChainId)
           this.connectAccount();
         } else {
@@ -260,7 +260,7 @@ export default {
     async connectAccount () {
       // console.log("navbar connect account", this.currentChainId)
       try {
-        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x3" && this.currentChainId !== "0x61") {
+        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x1" && this.currentChainId !== "0x38") {
           this.address = this.$t('wrongNetwork');
         }else {
           const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -272,7 +272,7 @@ export default {
     },
     async switchToEtheruemChain () {
       try {
-        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x3" && this.currentChainId !== "0x61") {
+        if (this.currentChainId !== this.chainId  && this.currentChainId !== this.testChainId && this.currentChainId !== "0x1" && this.currentChainId !== "0x38") {
           await ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: '0x7ff'}]

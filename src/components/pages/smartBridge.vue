@@ -144,6 +144,7 @@ let erpc = require("../../../eth/rpc");
 const intUrl = require("../../assets/coins/INT.png");
 const btcUrl = require("../../assets/coins/BTC.png");
 const ethUrl = require("../../assets/coins/ETH.png");
+const usdtUrl = require("../../assets/coins/USDT.png");
 export default {
   data() {
     return {
@@ -153,36 +154,39 @@ export default {
       privateKey: "",
       contracts: [],
       selectContract: "",
-      toAddress: "0x17C801AA5841D2f481Af1bab82768e97b102AA95",
+      toAddress: "0xdd5E91379E8d936dB82f0f9241919bae6b8E5110",
       amount: "",
       limit: "100000",
       price: "",
       chains: [
-        {chainId: "0x800", name: "INT Chain"},
-        {chainId: "0x3", name: "Ethereum"},
-        {chainId: "0x61", name: "Binance Smart Chain"}
+        {chainId: "0x7ff", name: "INT Chain"},
+        {chainId: "0x1", name: "Ethereum"},
+        {chainId: "0x38", name: "Binance Smart Chain"}
       ],
       intList:[
         {"name": "INT", "address": "", url: intUrl, amount: 0, decimals: 18},
-        {"name": "BTC", "address": "0xb230cba4ce0509c01515391f2cfdfe56ae322956", "url": btcUrl, amount: 0, decimals: 18},
-        {"name": "ETH", "address": "0xf4a7a68c04c8e94f4d399639966a95323dc32d8b", "url": ethUrl, amount: 0, decimals: 18}
+        {"name": "BTC", "address": "0xa6c3d6092671e64dcc12c9416dca2a7a2c0788b3", "url": btcUrl, amount: 0, decimals: 18},
+        {"name": "ETH", "address": "0xbb9995c8f494c5477dcbdea7060cfc5c30b7959b", "url": ethUrl, amount: 0, decimals: 18},
+        {"name": "USDT", "address": "0xb0273aa5b48b93a01928c005d8e7d443becb3b02", "url": usdtUrl, amount: 0, decimals: 18}
       ],
       ethList:[
-        {"name": "INT", "address": "0x7408af64bc449029badcf763c8dedfd85af8ae73", "url": intUrl, amount: 0, decimals: 18},
-        {"name": "WBTC", "address": "0x2a223d92494ec26e49e3d2b035f4a3c93097fd2f", "url": btcUrl, amount: 0, decimals: 18},
-        {"name": "WETH", "address": "0x7564b3244270161cce125f44ffa0230aefd4a2d9", "url": ethUrl, amount: 0, decimals: 18}
+        {"name": "INT", "address": "0xbe038a2fdfec62cf1bed852f141a43005035edcc", "url": intUrl, amount: 0, decimals: 18},
+        {"name": "WBTC", "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", "url": btcUrl, amount: 0, decimals: 18},
+        {"name": "WETH", "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", "url": ethUrl, amount: 0, decimals: 18},
+        {"name": "USDT", "address": "0xdac17f958d2ee523a2206206994597c13d831ec7", "url": usdtUrl, amount: 0, decimals: 18}
       ],
       bscList:[
-        {"name": "INT", "address": "0xcf555062c986305bb9f5887f565a5d71bebc4c42", "url": intUrl, amount: 0, decimals: 18},
-        {"name": "BTC", "address": "0x462b8aa34a02367d3558a985e80ab7eaf24b5f1d", "url": btcUrl, amount: 0, decimals: 18},
-        {"name": "ETH", "address": "0x8e4de294b2020b4c82aabff6e702d7dd57a21a0e", "url": ethUrl, amount: 0, decimals: 18}
+        {"name": "INT", "address": "0x0e349b8272b2e986436c8bd2b2b7944ae28d8778", "url": intUrl, amount: 0, decimals: 18},
+        {"name": "BTC", "address": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c", "url": btcUrl, amount: 0, decimals: 18},
+        {"name": "ETH", "address": "0x2170ed0880ac9a755fd29b2688956bd959f933f8", "url": ethUrl, amount: 0, decimals: 18},
+        {"name": "USDT", "address": "0x55d398326f99059fF775485246999027B3197955", "url": usdtUrl, amount: 0, decimals: 18}
       ],
       tokenList: [],
-      fromChainId: "0x800",
+      fromChainId: "0x7ff",
       // fromChain: "INT Chain",
       fromCoin: "INT",
       fromContractAddr: "",
-      toChainId: "0x3",
+      toChainId: "0x1",
       // toChain: "Ethereum",
       toCoin: "",
       direction: 0,
@@ -195,34 +199,34 @@ export default {
       minAmountINT: 10000,
       minAmountBTC: 0.01,
       minAmountETH: 0.1,
-      minAmountUSDT: 200,
+      minAmountUSDT: 100,
       largeAmount: 10000000,
       largeAmountINT: 10000000,
       largeAmountBTC: 100,
       largeAmountETH: 500,
       largeAmountUSDT: 1000000,
       chainParams: {
-        "0x800": [{
-          chainId: '0x800',
-          chainName: 'INT Chain Testnet',
+        "0x7ff": [{
+          chainId: '0x7ff',
+          chainName: 'INT Chain',
           nativeCurrency: {
             name: "INT",
             symbol: "INT",
             decimals: 18
           },
-          rpcUrls: ["https://testnet.titansrpc.intchain.io"],
-          blockExplorerUrls: ['https://test.titansexplorer.intchain.io']
+          rpcUrls: ["https://titansrpc.intchain.io"],
+          blockExplorerUrls: ['https://titansexplorer.intchain.io']
         }],
-        "0x61": [{
-          chainId: '0x61',
-          chainName: 'Binance Testnet',
+        "0x38": [{
+          chainId: '0x38',
+          chainName: 'Binance Chain',
           nativeCurrency: {
             name: "BNB",
             symbol: "BNB",
             decimals: 18
           },
-          rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
-          blockExplorerUrls: ['https://testnet.bscscan.com/']
+          rpcUrls: ["https://bsc-dataseed.binance.org/"],
+          blockExplorerUrls: ['https://bscscan.com/']
         }]
       }
     };
@@ -283,21 +287,21 @@ export default {
       // this.changeTokenList();
     },
     changeTokenList() {
-      if (this.fromChainId === "0x800") {
+      if (this.fromChainId === "0x7ff") {
         this.isINT = true;
         this.isETH = false;
         this.isBSC = false;
         this.tokenList = this.intList;
       }
 
-      if (this.fromChainId === "0x3") {
+      if (this.fromChainId === "0x1") {
         this.isINT = false;
         this.isETH = true;
         this.isBSC = false;
         this.tokenList = this.ethList;
       }
 
-      if (this.fromChainId === "0x61") {
+      if (this.fromChainId === "0x38") {
         this.isINT = false;
         this.isETH = false;
         this.isBSC = true;
@@ -482,22 +486,22 @@ export default {
     chainToDirection(fromChain, toChain) {
       const key = `${fromChain}to${toChain}`;
       switch (key) {
-        case '0x800to0x3':
+        case '0x7ffto0x1':
           this.direction = 1;
           break;
-        case '0x3to0x800':
+        case '0x1to0x7ff':
           this.direction = 2;
           break;
-        case '0x800to0x61':
+        case '0x7ffto0x38':
           this.direction = 3;
           break;
-        case '0x61to0x800':
+        case '0x38to0x7ff':
           this.direction = 4;
           break;
-        case '0x3to0x61':
+        case '0x1to0x38':
           this.direction = 5;
           break;
-        case '0x61to0x3':
+        case '0x38to0x1':
           this.direction = 6;
           break;
         default:

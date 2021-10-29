@@ -4,7 +4,7 @@ let Abi = require("int4.js").abi
 let Transaction = require("int4.js").transaction
 let axios = require("axios")
 
-const CHAINID = '97';
+const CHAINID = '56';
 
 let run = (body, exchange = false, direction)=> {
     return new Promise((resolve, reject) => {
