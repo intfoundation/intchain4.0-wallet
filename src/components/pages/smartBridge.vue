@@ -121,7 +121,7 @@
             <li>{{$t('tips3')}}</li>
             <li>{{$t('tips4')}}</li>
             <li><span>{{largeAmount}}</span>&nbsp<span>{{fromCoin}}</span><span>{{$t('tips5')}}</span></li>
-            <li><a href="https://test.titansexplorer.intchain.io/stats/bridgelist/1" target="_blank">{{$t('tips6')}}</a></li>
+            <li><a href="https://titansexplorer.intchain.io/stats/bridgelist/1" target="_blank">{{$t('tips6')}}</a></li>
           </ul>
         </div>
         <el-button @click="sendTx" class="gt" type="danger">
