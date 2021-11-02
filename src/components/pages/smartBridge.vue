@@ -327,21 +327,21 @@ export default {
           this.fromContractAddr = l.address;
           switch (token) {
             case "INT":
-              this.minAmount = this.minAmountINT;
+              this.minAmount = (this.direction === 1 || this.direction === 6 ) ? this.minAmountINT * 10 : this.minAmountINT;
               this.largeAmount = this.largeAmountINT;
               break;
             case "BTC":
             case "WBTC":
-              this.minAmount = this.minAmountBTC;
+              this.minAmount = (this.direction === 1 || this.direction === 6 ) ? this.minAmountBTC * 10 : this.minAmountBTC;
               this.largeAmount = this.largeAmountBTC;
               break;
             case "ETH":
             case "WETH":
-              this.minAmount = this.minAmountETH;
+              this.minAmount = (this.direction === 1 || this.direction === 6 ) ? this.minAmountETH* 10 : this.minAmountETH;
               this.largeAmount = this.largeAmountETH;
               break;
             case "USDT":
-              this.minAmount = this.minAmountUSDT;
+              this.minAmount = (this.direction === 1 || this.direction === 6 ) ? this.minAmountUSDT * 10 : this.minAmountUSDT;
               this.largeAmount = this.largeAmountUSDT;
               break;
             default:
@@ -382,6 +382,7 @@ export default {
       try {
         const accounts = await ethereum.request({ method: 'eth_accounts' });
         this.address = accounts[0];
+        this.chainToDirection(this.fromChainId, this.toChainId);
         await this.getBalance();
         await this.getGasPrice();
         await this.getTokenBalance();
@@ -457,6 +458,7 @@ export default {
             params: [{ chainId: chainId}]
           });
 
+          vm.chainToDirection(vm.fromChainId, vm.toChainId);
           vm.getGasPrice();
           vm.getBalance();
           vm.changeTokenList();
@@ -470,6 +472,7 @@ export default {
                 params: vm.chainParams[chainId]
               });
 
+              vm.chainToDirection(vm.fromChainId, vm.toChainId);
               vm.getGasPrice();
               vm.getBalance();
               vm.changeTokenList();
