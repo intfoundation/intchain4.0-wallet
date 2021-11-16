@@ -95,7 +95,7 @@ export default {
     withdrawVote: 'Withdraw Vote',
     unstake: 'Unstake',
     withdrawRewards: 'Withdraw Reward',
-    etAmount: 'Please enter the amount',
+    etAmount: 'Please enter the amount to stake/unstake/withdraw',
     confirm: 'Confirm',
     cancel: 'Cancel',
     mNum: 'The voting amount must be number',
