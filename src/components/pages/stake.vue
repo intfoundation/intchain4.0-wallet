@@ -250,7 +250,7 @@ export default {
       return val;
     },
     voted(row) {
-      this.$prompt(this.$t("etAmount"), "", {
+      this.$prompt(this.$t("stakeAmount"), "", {
         confirmButtonText: this.$t("confirm"),
         cancelButtonText: this.$t("cancel"),
         inputValidator: (val) => {
@@ -321,7 +321,7 @@ export default {
       });
     },
     unstake(row) {
-      this.$prompt(this.$t("etAmount"), "", {
+      this.$prompt(this.$t("unStakeAmount"), "", {
         confirmButtonText: this.$t("confirm"),
         cancelButtonText: this.$t("cancel"),
         inputValidator: (val) => {
@@ -401,7 +401,7 @@ export default {
       });
     },
     getReward(row) {
-      this.$prompt(this.$t("etAmount"), "", {
+      this.$prompt(this.$t("withdrawAmount"), "", {
         confirmButtonText: this.$t("confirm"),
         cancelButtonText: this.$t("cancel"),
         inputValidator: (val) => {
