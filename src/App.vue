@@ -69,4 +69,17 @@ export default {
   height: 188px;
   width: 100%;
 }
+
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: #e73737;
+}
+.el-select .el-input__inner:focus {
+  border-color: #e73737;
+}
+.el-select-dropdown__item.selected {
+  color: #e73737;
+}
+.el-input.is-active .el-input__inner, .el-input__inner:focus {
+  border-color: #e73737;
+}
 </style>

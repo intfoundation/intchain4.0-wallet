@@ -62,6 +62,22 @@
             </li>
             <li class="menu-item">
               <router-link
+                to="/setCommission"
+                id="home"
+                class="pgy"
+              >{{ $t("setCommission") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
+                to="/withdrawReward"
+                id="home"
+                class="pgy"
+              >{{ $t("withdrawReward") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
                 to="/stake"
                 id="home"
                 class="pgy"

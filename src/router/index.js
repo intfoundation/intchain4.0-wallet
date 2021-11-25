@@ -21,6 +21,12 @@ const unRegister = resolve => require(['@/components/pages/unRegister'], resolve
 //编辑节点信息
 const editValidator = resolve => require(['@/components/pages/editValidator'], resolve)
 
+//设置佣金比例
+const setCommission = resolve => require(['@/components/pages/setCommission'], resolve)
+
+//领取奖励
+const withdrawReward = resolve => require(['@/components/pages/withdrawReward'], resolve)
+
 //解禁
 // const unForbidden = resolve => require(['@/components/pages/unForbidden'], resolve)
 
@@ -87,7 +93,16 @@ const router = new Router({
             name: 'editValidator',
             component: editValidator
         },
-
+        {
+            path: '/setCommission',
+            name: 'setCommission',
+            component: setCommission
+        },
+        {
+            path: '/withdrawReward',
+            name: 'withdrawReward',
+            component: withdrawReward
+        },
         {
             path: '/faucet',
             name: 'faucet',
