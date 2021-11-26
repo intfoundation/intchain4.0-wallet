@@ -409,7 +409,7 @@ export default {
             & > a {
               display: inline-block;
               width: 100%;
-              min-width: 120px;
+              min-width: 125px;
             }
             &:hover {
               background-color: #f3f3f3;
