@@ -38,6 +38,14 @@
           <ul class="menu-box common-inline-block">
             <li class="menu-item">
               <router-link
+                to="/stake"
+                id="home"
+                class="pgy"
+              >{{ $t("vote") }}</router-link
+              >
+            </li>
+            <li class="menu-item">
+              <router-link
                 to="/register"
                 id="home"
                 class="pgy"
@@ -74,14 +82,6 @@
                 id="home"
                 class="pgy"
               >{{ $t("withdrawReward") }}</router-link
-              >
-            </li>
-            <li class="menu-item">
-              <router-link
-                to="/stake"
-                id="home"
-                class="pgy"
-              >{{ $t("vote") }}</router-link
               >
             </li>
           </ul>
@@ -409,7 +409,7 @@ export default {
             & > a {
               display: inline-block;
               width: 100%;
-              min-width: 80px;
+              min-width: 120px;
             }
             &:hover {
               background-color: #f3f3f3;
