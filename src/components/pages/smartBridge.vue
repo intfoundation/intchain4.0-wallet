@@ -396,7 +396,7 @@ export default {
       try {
         const b = await ethereum.request({
           method: 'eth_getBalance',
-          params: [this.address]
+          params: [this.address, "latest"]
         });
         this.balance = Utils.toINT(b)
       } catch (e) {
@@ -410,36 +410,34 @@ export default {
           token.amount = this.balance;
         } else {
           let decimalsSig = int4.abi.methodID('decimals', []);
-          let params1 = [
+          let params1 =
             {
               from: this.address,
               to: token.address,
               // value: "0x0",
               data: decimalsSig
-            },
-          ];
+            };
 
           let d = await ethereum.request({
             method: 'eth_call',
-            params: params1
+            params: [params1, "latest"]
           })
           // console.log('decimals', d);
           token.decimals = parseInt(d, 16);
 
           let functionSig = int4.abi.methodID("balanceOf", ["address"]);
           let data = int4.abi.encodeParams(["address"], [this.address]);
-          let params2 = [
+          let params2 =
             {
               from: this.address,
               to: token.address,
               // value: "0x0",
               data: functionSig + data.substring(2)
-            },
-          ];
+            };
 
           let b = await ethereum.request({
             'method': 'eth_call',
-            params: params2
+            params: [params2, "latest"]
           })
 
           token.amount = new BigNumber(parseInt(b, 16)).dividedBy(Math.pow(10, d)).toString(10);
